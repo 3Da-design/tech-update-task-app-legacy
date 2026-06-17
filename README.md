@@ -3,9 +3,7 @@
 技術更新時の影響を定量評価するための **従来構成（悪い例）** 実験台です。  
 同一機能のタスク管理アプリを、Controller に業務ロジックと DB アクセスを集中させた密結合構成で実装し、改良構成（別リポジトリ）と更新シナリオごとに比較します。
 
-[![CI](https://github.com/OWNER/tech-update-task-app/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/tech-update-task-app/actions/workflows/ci.yml)
-
-> `OWNER` は GitHub のユーザー名または Organization 名に置き換えてください。
+[![CI](https://github.com/3Da-design/tech-update-task-app/actions/workflows/ci.yml/badge.svg)](https://github.com/3Da-design/tech-update-task-app/actions/workflows/ci.yml)
 
 ---
 
