@@ -70,16 +70,11 @@
 
 ## ブランチ一覧
 
-| ブランチ | 内容 |
-|----------|------|
-| `main` | 改良構成 + シナリオ1（priority）+ 全結果ドキュメント |
-| `experiment-baseline-v1` | 改良構成ベースライン（メトリクス整備後） |
-| `exp/api-spec-change` | シナリオ1（3フェーズ実施済み） |
-| `exp/laravel-upgrade` | シナリオ2 |
-| `exp/test-tool-upgrade` | シナリオ3 |
-| `exp/js-library-change` | シナリオ4 |
-| `legacy-architecture` | 従来構成（Controller 直 DB） |
-| `exp/legacy-api-spec-change` | 従来構成でのシナリオ1 |
+| ブランチ / タグ | 内容 |
+|-----------------|------|
+| `main` | 従来構成ベースライン |
+| `experiment-baseline-v1` | ベースラインタグ（メトリクス比較の起点） |
+| `exp/*` | 更新シナリオ実施用ブランチ |
 
 ---
 

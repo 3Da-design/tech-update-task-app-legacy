@@ -27,7 +27,7 @@
 |------|------|
 | **ゴール** | 設計（モジュール化 + CI/CD）が技術更新時の影響をどれだけ抑えられるかを定量的に示す |
 | **本リポジトリ** | 従来構成（Fat Controller、Service/Repository なし、Web/API でロジック重複） |
-| **ベースライン** | **`legacy-architecture` ブランチ**（`experiment-baseline-v1` タグ）。`priority` 等のシナリオ変更は `exp/legacy-*` ブランチで実施 |
+| **ベースライン** | **`main`** および **`experiment-baseline-v1` タグ**。シナリオ変更は `exp/*` ブランチで実施 |
 | **対照** | 改良構成リポジトリ（`tech-update-task-app` 等、Controller / Service / Repository 分離） |
 | **比較条件** | 同一アプリ（タスク管理）、同一スタック（Laravel）、同一 CI ワークフロー・同一 Feature テスト |
 | **評価スコープ** | **アプリ全体**（認証・プロフィール・タスク・CI 全ジョブ） |
