@@ -227,7 +227,9 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 
 | シナリオ | ドキュメント |
 |----------|--------------|
-| バックエンド API 仕様変更 | [api-spec-change.md](docs/experiment/scenarios/api-spec-change.md) |
+| バックエンド API 仕様変更（索引） | [api-spec-change.md](docs/experiment/scenarios/api-spec-change.md) |
+| API 仕様変更: status integer 化 | [api-spec-change-status-int.md](docs/experiment/scenarios/api-spec-change-status-int.md) |
+| API 仕様変更: priority 追加 | [api-spec-change-priority.md](docs/experiment/scenarios/api-spec-change-priority.md) |
 | DB / クエリ変更 | [db-schema-change.md](docs/experiment/scenarios/db-schema-change.md) |
 | Laravel バージョン更新 | [laravel-upgrade.md](docs/experiment/scenarios/laravel-upgrade.md) |
 | テストツール更新 | [test-tool-upgrade.md](docs/experiment/scenarios/test-tool-upgrade.md) |

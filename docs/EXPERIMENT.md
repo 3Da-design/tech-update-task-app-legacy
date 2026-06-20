@@ -15,7 +15,7 @@
 ## 本リポジトリの役割
 
 - 従来構成の **ベースライン** を確立する（**`experiment-baseline-v1` タグ** 推奨。タスク属性は `title` / `description` / `due_date` / `status` の 4 項目のみ）
-- 更新シナリオ（例: `priority` 追加）は **`exp/legacy-*` ブランチ** で実施し、ベースラインと混在させない
+- 更新シナリオ（例: `api-spec-change-status-int` / `api-spec-change-priority`）は **`exp/*` ブランチ** で実施し、ベースラインと混在させない
 - 更新シナリオ実施後のメトリクスを記録する
 - 改良構成リポジトリと **同一シナリオ・同一手順** で比較する
 
@@ -40,7 +40,9 @@
 
 | シナリオ | ドキュメント |
 |----------|--------------|
-| バックエンド API 仕様変更 | [api-spec-change.md](./experiment/scenarios/api-spec-change.md) |
+| バックエンド API 仕様変更（索引） | [api-spec-change.md](./experiment/scenarios/api-spec-change.md) |
+| API 仕様変更: status integer 化 | [api-spec-change-status-int.md](./experiment/scenarios/api-spec-change-status-int.md) |
+| API 仕様変更: priority 追加 | [api-spec-change-priority.md](./experiment/scenarios/api-spec-change-priority.md) |
 | DB / クエリ変更（タイトル検索） | [db-schema-change.md](./experiment/scenarios/db-schema-change.md) |
 | Laravel バージョン更新 | [laravel-upgrade.md](./experiment/scenarios/laravel-upgrade.md) |
 | テストツール更新 | [test-tool-upgrade.md](./experiment/scenarios/test-tool-upgrade.md) |
@@ -121,7 +123,7 @@ git push origin experiment-baseline-v1
 ## 実験の進め方（概要）
 
 1. [BEFORE.md](./experiment/BEFORE.md)（ベースライン tag・品質ゲート・計測）
-2. シナリオ用ブランチを切る（例: `exp/legacy-api-spec-change`）
+2. シナリオ用ブランチを切る（例: `exp/api-spec-change-status-int`。各 [scenarios/](./experiment/scenarios/) MD を参照）
 3. [scenarios/](./experiment/scenarios/) に従い更新を適用
 4. `after_update` でメトリクス収集
 5. テスト・コードを修正し CI を緑にする
@@ -134,7 +136,8 @@ git push origin experiment-baseline-v1
 | ドキュメント | 内容 |
 |--------------|------|
 | [experiment/results/COMPARISON.md](./experiment/results/COMPARISON.md) | 全シナリオの 3 フェーズ比較表（改良 vs 従来） |
-| [experiment/results/legacy/api-spec-change/](./experiment/results/legacy/api-spec-change/) | シナリオ1（従来構成・本リポジトリ） |
+| [experiment/results/legacy/api-spec-change/](./experiment/results/legacy/api-spec-change/) | priority 追加（旧 ID `api-spec-change`・従来構成） |
+| [experiment/results/legacy/api-spec-change-status-int/](./experiment/results/legacy/api-spec-change-status-int/) | status integer 化（従来構成） |
 
 ## 関連ドキュメント
 

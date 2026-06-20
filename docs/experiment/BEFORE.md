@@ -12,8 +12,10 @@ legacy / improved とも **同一手順**。本リポジトリ（legacy）は **
 ```bash
 git fetch --tags
 git checkout experiment-baseline-v1
-git checkout -b exp/api-spec-change-status-int
+git checkout -b exp/<scenario-id>
 ```
+
+`<scenario-id>` は実施する [scenarios/](./scenarios/) MD に記載のブランチ名（例: `api-spec-change-status-int` → `exp/api-spec-change-status-int`、`api-spec-change-priority` → `exp/api-spec-change-priority`、`db-schema-change` → `exp/db-schema-change`）。
 
 ## 1-1. 品質ゲート確認
 
