@@ -27,12 +27,14 @@
 |------|------|
 | **ゴール** | 設計（モジュール化 + CI/CD）が技術更新時の影響をどれだけ抑えられるかを定量的に示す |
 | **本リポジトリ** | 従来構成（Fat Controller、Service/Repository なし、Web/API でロジック重複） |
-| **ベースライン** | **`main`** および **`experiment-baseline-v1` タグ**。シナリオ変更は `exp/*` ブランチで実施 |
+| **ベースライン** | **`main`** および **`experiment-baseline-v1` タグ**。タスク属性は **`title` / `description` / `due_date` / `status` の 4 項目のみ**。`priority` 追加・status integer 化などの仕様変更は **`exp/*` ブランチ** で実施 |
 | **対照** | 改良構成リポジトリ（`tech-update-task-app` 等、Controller / Service / Repository 分離） |
 | **比較条件** | 同一アプリ（タスク管理）、同一スタック（Laravel）、同一 CI ワークフロー・同一 Feature テスト |
 | **評価スコープ** | **アプリ全体**（認証・プロフィール・タスク・CI 全ジョブ） |
 
 詳細は [docs/EXPERIMENT.md](docs/EXPERIMENT.md) を参照してください。
+
+> **フロントエンド:** 本リポジトリは Blade + Tailwind CSS + Vite + Alpine.js。React 等への移行比較は主シナリオ外の **拡張比較**（[EXPERIMENT.md — フロントエンドスタック](docs/EXPERIMENT.md#フロントエンドスタック拡張比較)）として位置づける。
 
 ---
 
@@ -89,7 +91,7 @@ app/
 | CI | GitHub Actions（4 ジョブ並列） |
 | 開発環境 | Docker Compose（`http://localhost:8001` — 改良構成と同時起動可） |
 
-機能一覧は [docs/FeatureList.md](docs/FeatureList.md) を参照してください。
+機能一覧は [docs/FEATURE_LIST.md](docs/FEATURE_LIST.md) を参照してください。
 
 ---
 
@@ -225,26 +227,28 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 
 ## 更新シナリオ
 
-| シナリオ | ドキュメント |
-|----------|--------------|
-| バックエンド API 仕様変更（索引） | [api-spec-change.md](docs/experiment/scenarios/api-spec-change.md) |
-| API 仕様変更: status integer 化 | [api-spec-change-status-int.md](docs/experiment/scenarios/api-spec-change-status-int.md) |
-| API 仕様変更: priority 追加 | [api-spec-change-priority.md](docs/experiment/scenarios/api-spec-change-priority.md) |
-| DB / クエリ変更 | [db-schema-change.md](docs/experiment/scenarios/db-schema-change.md) |
-| Laravel バージョン更新 | [laravel-upgrade.md](docs/experiment/scenarios/laravel-upgrade.md) |
-| テストツール更新 | [test-tool-upgrade.md](docs/experiment/scenarios/test-tool-upgrade.md) |
-| JavaScript ライブラリ変更 | [js-library-change.md](docs/experiment/scenarios/js-library-change.md) |
+本研究の **主シナリオは 3 件**。いずれも [docs/experiment/scenarios/](docs/experiment/scenarios/) に手順があり、`experiment-baseline-v1` から `exp/*` ブランチで実施します。
+
+| # | シナリオ | ドキュメント |
+|---|----------|--------------|
+| 1 | API 仕様変更: status integer 化 | [api-spec-change-status-int.md](docs/experiment/scenarios/api-spec-change-status-int.md) |
+| 2 | API 仕様変更: priority 追加 | [api-spec-change-priority.md](docs/experiment/scenarios/api-spec-change-priority.md) |
+| 3 | DB / クエリ変更（タイトル検索） | [db-schema-change.md](docs/experiment/scenarios/db-schema-change.md) |
+
+**拡張実験（参考）:** Laravel バージョン更新・テストツール更新・JavaScript ライブラリ変更は、主シナリオとは別枠の参考計測です。手順 MD は本リポジトリには含めず、収集済み結果は [docs/experiment/results/COMPARISON.md](docs/experiment/results/COMPARISON.md) の「拡張実験」節を参照してください。
 
 ---
 
 ## 評価指標
 
-| 指標 | 概要 | 取得 |
-|------|------|------|
-| **修正工数（主）** | 変更ファイル数・追加/削除行 | `composer experiment:metrics -- --diff-ref experiment-baseline-v1` の `git.*` |
-| **テスト通過率** | PHPUnit / Newman 等の成功 ÷ 総数 | 同上（特に `after_update` の失敗数） |
-| **作業時間** | 分 | 手動（テンプレート） |
-| **エラー発生率** | PHPStan 件数、CI 失敗ジョブ | スクリプト + 手動 |
+**主指標は修正工数**（`after_fix` フェーズの変更ファイル数・行数）。API 仕様変更シナリオでは、改良構成と従来構成で **テスト通過率が同一になることがある** ため、通過率だけでは構成差を評価できません。
+
+| 優先 | 指標 | 概要 | 取得 |
+|------|------|------|------|
+| **1** | **修正工数** | 変更ファイル数・追加/削除行 | `composer experiment:metrics -- --diff-ref experiment-baseline-v1` の `git.*`（**after_fix**） |
+| 2 | 更新直後のテスト失敗数 | PHPUnit / Newman の fail 件数 | 同上（**after_update**） |
+| 3 | 作業時間 | 分 | 手動（[metrics-record-template.md](docs/experiment/metrics-record-template.md)） |
+| 4 | エラー発生率 | PHPStan 件数、CI 失敗ジョブ | スクリプト + 手動 |
 
 定義の詳細: [docs/EXPERIMENT.md](docs/EXPERIMENT.md)
 
@@ -254,9 +258,8 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 
 | ドキュメント | 内容 |
 |--------------|------|
-| [docs/COMPARABILITY.md](docs/COMPARABILITY.md) | 比較可能化の修正内容（本ドキュメント） |
 | [docs/EXPERIMENT.md](docs/EXPERIMENT.md) | 実験設計・指標・フェーズ |
-| [docs/FeatureList.md](docs/FeatureList.md) | 機能一覧 |
+| [docs/FEATURE_LIST.md](docs/FEATURE_LIST.md) | 機能一覧 |
 | [docs/TESTING.md](docs/TESTING.md) | テストツールの使い方 |
 | [docs/CI.md](docs/CI.md) | GitHub Actions |
 | [docs/experiment/LEGACY_MIGRATION.md](docs/experiment/LEGACY_MIGRATION.md) | 従来構成リポジトリ作成手順 |

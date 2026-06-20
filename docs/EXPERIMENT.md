@@ -38,17 +38,25 @@
 
 各シナリオの手順は [experiment/scenarios/](./experiment/scenarios/) を参照してください。
 
-| シナリオ | ドキュメント |
-|----------|--------------|
-| バックエンド API 仕様変更（索引） | [api-spec-change.md](./experiment/scenarios/api-spec-change.md) |
-| API 仕様変更: status integer 化 | [api-spec-change-status-int.md](./experiment/scenarios/api-spec-change-status-int.md) |
-| API 仕様変更: priority 追加 | [api-spec-change-priority.md](./experiment/scenarios/api-spec-change-priority.md) |
-| DB / クエリ変更（タイトル検索） | [db-schema-change.md](./experiment/scenarios/db-schema-change.md) |
-| Laravel バージョン更新 | [laravel-upgrade.md](./experiment/scenarios/laravel-upgrade.md) |
-| テストツール更新 | [test-tool-upgrade.md](./experiment/scenarios/test-tool-upgrade.md) |
-| JavaScript ライブラリ変更 | [js-library-change.md](./experiment/scenarios/js-library-change.md) |
+### 主シナリオ（3 件）
+
+| # | シナリオ | ドキュメント |
+|---|----------|--------------|
+| 1 | API 仕様変更: status integer 化 | [api-spec-change-status-int.md](./experiment/scenarios/api-spec-change-status-int.md) |
+| 2 | API 仕様変更: priority 追加 | [api-spec-change-priority.md](./experiment/scenarios/api-spec-change-priority.md) |
+| 3 | DB / クエリ変更（タイトル検索） | [db-schema-change.md](./experiment/scenarios/db-schema-change.md) |
 
 **原則:** 1 シナリオ = 1 実験ラン。両リポジトリに **同一の変更内容** を適用し、メトリクスを比較する。
+
+### 拡張実験（参考）
+
+以下は主シナリオとは別枠の参考計測です。手順 MD は本リポジトリには含めません。収集済み結果は [experiment/results/COMPARISON.md](./experiment/results/COMPARISON.md) の「拡張実験」節を参照してください。
+
+| シナリオ | 結果ディレクトリ |
+|----------|------------------|
+| Laravel バージョン更新 | [results/laravel-upgrade/](./experiment/results/laravel-upgrade/) |
+| テストツール更新 | [results/test-tool-upgrade/](./experiment/results/test-tool-upgrade/) |
+| JavaScript ライブラリ変更 | [results/js-library-change/](./experiment/results/js-library-change/) |
 
 ## 評価指標
 
@@ -60,13 +68,24 @@
 | **2** | 更新直後のテスト失敗数 | 同上の `phpunit.fail` / `newman.fail`（**after_update** フェーズ） |
 | **3** | 作業時間（分） | [metrics-record-template.md](./experiment/metrics-record-template.md) に手動記録 |
 
-> **注意:** シナリオ 1（API 仕様変更）では **通過率だけでは改良構成と従来構成の差が出ない** 場合がある。修正ファイル数の差を主に見ること（従来構成では `Web\TaskController` と `API\TaskController` の両方を直すことが多い）。
+> **注意:** API 仕様変更シナリオ（1・2）では **通過率だけでは改良構成と従来構成の差が出ない** 場合がある。修正ファイル数の差を主に見ること（従来構成では `Web\TaskController` と `API\TaskController` の両方を直すことが多い）。
 
-### 1. テスト通過率
+### 1. 修正工数（主指標）
 
-```
-通過率 (%) = 成功数 ÷ 総数 × 100
-```
+`after_fix` フェーズで CI が緑になった時点の diff を計測する。
+
+| 項目 | 取得方法 |
+|------|----------|
+| 変更ファイル数 | `composer experiment:metrics` の `git.files_changed` |
+| 追加 / 削除行数 | `git.lines_added` / `git.lines_deleted` |
+| コミット数 | シナリオ開始〜CI 緑まで（手動） |
+| 作業時間（分） | [metrics-record-template.md](./experiment/metrics-record-template.md) に手動記録 |
+
+**完了基準:** 両リポジトリで CI 全ジョブが成功（`after_fix` フェーズ）。
+
+### 2. 更新直後のテスト失敗数
+
+通過率（成功 ÷ 総数）は参考値。**構成差の判定には使わない**（API 系シナリオで同一になりうる）。
 
 | 対象 | 成功の定義 |
 |------|------------|
@@ -75,20 +94,7 @@
 | ESLint | `npm run lint` が exit 0 |
 | PHPStan | `composer phpstan` が exit 0（エラー 0 件） |
 
-自動収集: `composer experiment:metrics`（[scripts/collect-experiment-metrics.sh](../scripts/collect-experiment-metrics.sh)）
-
-### 2. 修正工数
-
-自動化しない項目。 [metrics-record-template.md](./experiment/metrics-record-template.md) に手動記録する。
-
-| 項目 | 取得方法 |
-|------|----------|
-| 作業時間（分） | タイマーまたは手入力 |
-| 変更ファイル数 | `git diff --stat` |
-| 追加 / 削除行数 | `git diff --shortstat` |
-| コミット数 | シナリオ開始〜CI 緑まで |
-
-**完了基準:** 両リポジトリで CI 全ジョブが成功（`after_fix` フェーズ）。
+自動収集: `composer experiment:metrics`（[scripts/collect-experiment-metrics.sh](../scripts/collect-experiment-metrics.sh)）。主に **after_update** の `phpunit.fail` / `newman.fail` を記録する。
 
 ### 3. エラー発生率
 
@@ -100,6 +106,12 @@
 | PHPStan エラー件数 | 更新直後の error 行数 |
 | CI ジョブ失敗 | push ごとの失敗ジョブ数 ÷ 実行ジョブ数 |
 | 手動不具合 | ブラウザ / API で発見したバグ件数（メモ欄） |
+
+## フロントエンドスタック（拡張比較）
+
+本リポジトリおよび改良構成リポジトリの **主実験** は Blade + Tailwind CSS + Vite + Alpine.js で統一している。**React 等の SPA フレームワークへの移行は本リポジトリには含まれない**。
+
+Blade と React の比較は、主シナリオ 3 件とは別枠の **拡張比較** として位置づける。フロントエンド刷新が技術更新の影響範囲に与える差を調べる場合は、別リポジトリまたは別ブランチで同一シナリオを再実施すること。
 
 ## 実験フェーズ
 

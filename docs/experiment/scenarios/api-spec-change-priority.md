@@ -127,6 +127,5 @@ scripts/publish-experiment-results.sh --scenario legacy/api-spec-change-priority
 
 ## 関連
 
-- [api-spec-change.md](./api-spec-change.md) — API 仕様変更シナリオ索引
 - [api-spec-change-status-int.md](./api-spec-change-status-int.md) — 別サブシナリオ（status integer 化）
 - [EXPERIMENT.md](../../EXPERIMENT.md) — 主評価指標の定義
