@@ -147,7 +147,7 @@ scripts/publish-experiment-results.sh --scenario legacy/api-spec-change-status-i
 - [ ] GitHub Actions 4 ジョブすべて成功（`after_fix`）
 - [ ] `experiment/metrics/runs/<run_id>/` に `baseline.json` / `after_update.json` / `after_fix.json` がある
 - [ ] （任意）`composer experiment:record -- --scenario api-spec-change-status-int --write` で `RECORD.md` を生成
-- [ ] [docs/experiment/results/](../results/) に結果をコピー
+- [ ] `experiment/results/` に結果をコピー（`scripts/publish-experiment-results.sh`）
 - [ ] 改良構成リポジトリで同一手順を実施
 
 ## 関連

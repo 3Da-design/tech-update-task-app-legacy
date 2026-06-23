@@ -82,7 +82,7 @@ composer experiment:metrics -- --phase after_update --diff-ref experiment-baseli
 composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-v1
 
 composer experiment:record -- --scenario db-schema-change --write
-scripts/publish-experiment-results.sh --scenario legacy/db-schema-change
+scripts/publish-experiment-results.sh --scenario db-schema-change
 ```
 
 ## 記録するメトリクス（主指標）
@@ -100,7 +100,8 @@ scripts/publish-experiment-results.sh --scenario legacy/db-schema-change
 
 - [ ] GitHub Actions 4 ジョブすべて成功（`after_fix`）
 - [ ] `experiment/metrics/runs/<run_id>/` に 3 フェーズ JSON がある
-- [ ] 改良 vs legacy で `git.files_changed` を比較表に記載
+- [ ] `experiment/results/` に結果をコピー（`scripts/publish-experiment-results.sh`）
+- [ ] 改良 vs legacy で `git.files_changed` を各リポジトリの `experiment/results/` で比較
 
 ## 関連
 

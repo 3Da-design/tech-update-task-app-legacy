@@ -115,14 +115,14 @@ scripts/publish-experiment-results.sh --scenario legacy/api-spec-change-priority
 
 **期待される差:** 従来構成は `files_changed` が改良構成より **+2（Web / API Controller）** 程度多い。
 
-> **履歴:** 旧シナリオ ID `api-spec-change` として実施した結果は [results/legacy/api-spec-change/](../results/legacy/api-spec-change/) を参照。
+> **履歴:** 旧シナリオ ID は `api-spec-change`。現行 ID は `api-spec-change-priority`。
 
 ## 完了条件
 
 - [ ] GitHub Actions 4 ジョブすべて成功（`after_fix`）
 - [ ] `experiment/metrics/runs/<run_id>/` に `baseline.json` / `after_update.json` / `after_fix.json` がある
 - [ ] （任意）`composer experiment:record -- --scenario api-spec-change-priority --write` で `RECORD.md` を生成
-- [ ] [docs/experiment/results/](../results/) に結果をコピー
+- [ ] `experiment/results/` に結果をコピー（`scripts/publish-experiment-results.sh`）
 - [ ] 改良構成リポジトリで同一手順を実施
 
 ## 関連

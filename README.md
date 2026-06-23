@@ -91,8 +91,6 @@ app/
 | CI | GitHub Actions（4 ジョブ並列） |
 | 開発環境 | Docker Compose（`http://localhost:8001` — 改良構成と同時起動可） |
 
-機能一覧は [docs/FEATURE_LIST.md](docs/FEATURE_LIST.md) を参照してください。
-
 ---
 
 ## クイックスタート
@@ -180,8 +178,6 @@ docker compose --profile node run --rm node npm run test:api
 | `frontend` | ESLint + Vite build |
 | `api-tests` | Newman（Postman コレクション） |
 
-詳細: [docs/CI.md](docs/CI.md)、[docs/TESTING.md](docs/TESTING.md)
-
 ---
 
 ## 実験の進め方
@@ -200,9 +196,9 @@ git tag -a experiment-baseline-v1 -m "Experiment baseline: legacy architecture"
 
 ### 2. 更新シナリオの実施
 
-[docs/experiment/scenarios/](docs/experiment/scenarios/) の手順に従い、ブランチで変更を適用します。
+[docs/scenarios/](docs/scenarios/) の手順に従い、ブランチで変更を適用します。
 
-BEFORE（ベースライン）の手順は [docs/experiment/BEFORE.md](docs/experiment/BEFORE.md) を参照。`experiment-baseline-v1` は legacy Docker（**8001**）込みの CI 緑状態を指します（`git pull` のあと `git fetch --tags`）。
+BEFORE（ベースライン）の手順は [docs/EXPERIMENT.md — ベースライン手順](docs/EXPERIMENT.md#ベースライン手順before) を参照。`experiment-baseline-v1` は legacy Docker（**8001**）込みの CI 緑状態を指します（`git pull` のあと `git fetch --tags`）。
 
 ```bash
 git fetch --tags
@@ -217,25 +213,25 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 
 ### 3. 記録
 
-[docs/experiment/metrics-record-template.md](docs/experiment/metrics-record-template.md) の列定義に従い、スプレッドシート等に記録します。
+[docs/EXPERIMENT.md — メトリクス記録テンプレート](docs/EXPERIMENT.md#メトリクス記録テンプレート) の列定義に従い、スプレッドシート等に記録します。
 
 ### 4. 改良構成との比較
 
-改良構成リポジトリで **同じシナリオ・同じ手順** を実施し、メトリクスを [docs/experiment/results/COMPARISON.md](docs/experiment/results/COMPARISON.md) の形式で比較します。本リポジトリの作成手順は [docs/experiment/LEGACY_MIGRATION.md](docs/experiment/LEGACY_MIGRATION.md) を参照してください。
+改良構成リポジトリで **同じシナリオ・同じ手順** を実施し、各リポジトリの `experiment/results/<scenario>/` でメトリクスを比較します。本リポジトリの作成手順は [docs/EXPERIMENT.md — 従来構成リポジトリ作成記録](docs/EXPERIMENT.md#従来構成リポジトリ作成記録) を参照してください。
 
 ---
 
 ## 更新シナリオ
 
-本研究の **主シナリオは 3 件**。いずれも [docs/experiment/scenarios/](docs/experiment/scenarios/) に手順があり、`experiment-baseline-v1` から `exp/*` ブランチで実施します。
+本研究の **主シナリオは 3 件**。いずれも [docs/scenarios/](docs/scenarios/) に手順があり、`experiment-baseline-v1` から `exp/*` ブランチで実施します。
 
 | # | シナリオ | ドキュメント |
 |---|----------|--------------|
-| 1 | API 仕様変更: status integer 化 | [api-spec-change-status-int.md](docs/experiment/scenarios/api-spec-change-status-int.md) |
-| 2 | API 仕様変更: priority 追加 | [api-spec-change-priority.md](docs/experiment/scenarios/api-spec-change-priority.md) |
-| 3 | DB / クエリ変更（タイトル検索） | [db-schema-change.md](docs/experiment/scenarios/db-schema-change.md) |
+| 1 | API 仕様変更: status integer 化 | [api-spec-change-status-int.md](docs/scenarios/api-spec-change-status-int.md) |
+| 2 | API 仕様変更: priority 追加 | [api-spec-change-priority.md](docs/scenarios/api-spec-change-priority.md) |
+| 3 | DB / クエリ変更（タイトル検索） | [db-schema-change.md](docs/scenarios/db-schema-change.md) |
 
-**拡張実験（参考）:** Laravel バージョン更新・テストツール更新・JavaScript ライブラリ変更は、主シナリオとは別枠の参考計測です。手順 MD は本リポジトリには含めず、収集済み結果は [docs/experiment/results/COMPARISON.md](docs/experiment/results/COMPARISON.md) の「拡張実験」節を参照してください。
+**拡張実験（参考）:** Laravel バージョン更新・テストツール更新・JavaScript ライブラリ変更は、主シナリオとは別枠の参考計測です。手順 MD は本リポジトリには含めず、収集済み結果は [experiment/results/](experiment/results/) を参照してください。
 
 ---
 
@@ -247,7 +243,7 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 |------|------|------|------|
 | **1** | **修正工数** | 変更ファイル数・追加/削除行 | `composer experiment:metrics -- --diff-ref experiment-baseline-v1` の `git.*`（**after_fix**） |
 | 2 | 更新直後のテスト失敗数 | PHPUnit / Newman の fail 件数 | 同上（**after_update**） |
-| 3 | 作業時間 | 分 | 手動（[metrics-record-template.md](docs/experiment/metrics-record-template.md)） |
+| 3 | 作業時間 | 分 | 手動（[EXPERIMENT.md — メトリクス記録テンプレート](docs/EXPERIMENT.md#メトリクス記録テンプレート)） |
 | 4 | エラー発生率 | PHPStan 件数、CI 失敗ジョブ | スクリプト + 手動 |
 
 定義の詳細: [docs/EXPERIMENT.md](docs/EXPERIMENT.md)
@@ -259,12 +255,8 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 | ドキュメント | 内容 |
 |--------------|------|
 | [docs/EXPERIMENT.md](docs/EXPERIMENT.md) | 実験設計・指標・フェーズ |
-| [docs/FEATURE_LIST.md](docs/FEATURE_LIST.md) | 機能一覧 |
-| [docs/TESTING.md](docs/TESTING.md) | テストツールの使い方 |
-| [docs/CI.md](docs/CI.md) | GitHub Actions |
-| [docs/experiment/LEGACY_MIGRATION.md](docs/experiment/LEGACY_MIGRATION.md) | 従来構成リポジトリ作成手順 |
-| [docs/experiment/metrics-record-template.md](docs/experiment/metrics-record-template.md) | メトリクス記録テンプレート |
-| [docs/experiment/scenarios/](docs/experiment/scenarios/) | 更新シナリオ手順 |
+| [docs/scenarios/](docs/scenarios/) | 更新シナリオ手順 |
+| [experiment/results/](experiment/results/) | シナリオ結果（publish 先） |
 
 ---
 
