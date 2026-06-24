@@ -8,6 +8,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -66,7 +67,7 @@ class TaskController extends Controller
 
   private function currentUserId(): int
   {
-    $id = $this->currentUserId();
+    $id = Auth::id();
 
     if ($id === null) {
       throw new AuthenticationException;
