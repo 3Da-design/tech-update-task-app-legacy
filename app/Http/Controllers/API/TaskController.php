@@ -66,7 +66,7 @@ class TaskController extends Controller
 
   private function currentUserId(): int
   {
-    $id = auth()->id();
+    $id = $this->currentUserId();
 
     if ($id === null) {
       throw new AuthenticationException;
