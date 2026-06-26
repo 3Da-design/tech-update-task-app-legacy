@@ -270,7 +270,7 @@ doc = {
     "run_id": os.environ["RUN_ID"],
     "phase": os.environ["PHASE"],
     "recorded_at": os.environ["TIMESTAMP"],
-    "repository": "improved",
+    "repository": "legacy",
     "phpstan": {
         "exit_code": int(os.environ["PHPSTAN_EXIT"]),
         "error_count": int(os.environ["PHPSTAN_ERRORS"]),
