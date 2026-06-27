@@ -48,12 +48,14 @@ class TaskWebTest extends TestCase
     $response = $this->actingAs($this->user)->post('/tasks', [
       'title' => 'New web task',
       'status' => 'todo',
+      'priority' => 'low',
     ]);
 
     $response->assertRedirect(route('tasks.index'));
     $this->assertDatabaseHas('tasks', [
       'user_id' => $this->user->id,
       'title' => 'New web task',
+      'priority' => 'low',
     ]);
   }
 
@@ -80,16 +82,19 @@ class TaskWebTest extends TestCase
     $response = $this->actingAs($this->user)->put("/tasks/{$task->id}", [
       'title' => 'After',
       'status' => 'in_progress',
+      'priority' => 'high',
     ]);
 
     $response->assertRedirect(route('tasks.index', [
       'title' => 'After',
       'status' => 'in_progress',
+      'priority' => 'high',
     ]));
     $this->assertDatabaseHas('tasks', [
       'id' => $task->id,
       'title' => 'After',
       'status' => 'in_progress',
+      'priority' => 'high',
     ]);
   }
 

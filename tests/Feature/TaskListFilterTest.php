@@ -131,6 +131,7 @@ class TaskListFilterTest extends TestCase
       'title' => 'Foo task',
       'description' => null,
       'status' => 'todo',
+      'priority' => 'low',
       'due_date' => null,
     ]);
 
@@ -139,6 +140,7 @@ class TaskListFilterTest extends TestCase
       'title' => 'Bar task',
       'description' => null,
       'status' => 'done',
+      'priority' => 'high',
       'due_date' => '2026-06-01',
     ]);
 
@@ -147,6 +149,90 @@ class TaskListFilterTest extends TestCase
       'title' => 'Baz task',
       'description' => null,
       'status' => 'in_progress',
+      'priority' => 'medium',
+      'due_date' => '2026-06-15',
+    ]);
+  }
+
+  public function test_web_index_filters_by_priority(): void
+  {
+    $this->seedTasks();
+
+    $response = $this->actingAs($this->user)->get('/tasks?priority=high');
+
+    $response->assertOk();
+    $response->assertSee('Bar task', false);
+    $response->assertDontSee('Foo task', false);
+    $response->assertDontSee('Baz task', false);
+  }
+
+  public function test_web_index_sorts_priority_asc(): void
+  {
+    $this->seedTasksForPrioritySort();
+
+    $response = $this->actingAs($this->user)->get('/tasks?priority_sort=asc');
+
+    $response->assertOk();
+    $content = $response->getContent();
+    $this->assertNotFalse($content);
+    $fooPos = strpos($content, 'Foo task');
+    $bazPos = strpos($content, 'Baz task');
+    $barPos = strpos($content, 'Bar task');
+    $this->assertNotFalse($fooPos);
+    $this->assertNotFalse($bazPos);
+    $this->assertNotFalse($barPos);
+    $this->assertLessThan($bazPos, $fooPos);
+    $this->assertLessThan($barPos, $bazPos);
+  }
+
+  public function test_api_index_filters_by_priority(): void
+  {
+    $this->seedTasks();
+
+    $response = $this->actingAs($this->user)->getJson('/api/tasks?priority=high');
+
+    $response->assertOk();
+    $titles = collect($response->json('data'))->pluck('title')->all();
+    $this->assertSame(['Bar task'], $titles);
+  }
+
+  public function test_api_index_sorts_priority_asc(): void
+  {
+    $this->seedTasksForPrioritySort();
+
+    $response = $this->actingAs($this->user)->getJson('/api/tasks?priority_sort=asc');
+
+    $response->assertOk();
+    $titles = collect($response->json('data'))->pluck('title')->all();
+    $this->assertSame(['Foo task', 'Baz task', 'Bar task'], $titles);
+  }
+
+  private function seedTasksForPrioritySort(): void
+  {
+    Task::query()->create([
+      'user_id' => $this->user->id,
+      'title' => 'Foo task',
+      'description' => null,
+      'status' => 'todo',
+      'priority' => 'low',
+      'due_date' => null,
+    ]);
+
+    Task::query()->create([
+      'user_id' => $this->user->id,
+      'title' => 'Bar task',
+      'description' => null,
+      'status' => 'done',
+      'priority' => 'high',
+      'due_date' => '2026-06-15',
+    ]);
+
+    Task::query()->create([
+      'user_id' => $this->user->id,
+      'title' => 'Baz task',
+      'description' => null,
+      'status' => 'in_progress',
+      'priority' => 'medium',
       'due_date' => '2026-06-15',
     ]);
   }
