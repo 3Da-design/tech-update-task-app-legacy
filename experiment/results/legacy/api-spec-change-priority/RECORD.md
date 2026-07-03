@@ -22,9 +22,9 @@
 
 | フェーズ | CI (失敗/総数) | 作業時間 (分) | 変更ファイル | 追加行 | 削除行 | コミット数 | 手動バグ | メモ |
 |:---------|:---------------|:--------------|:-------------|:-------|:-------|:-----------|:---------|:-----|
-| ベースライン | | | | | | | | |
-| 更新直後 | | | | | | | | |
-| 修正後 | | | | | | | | |
+| ベースライン | 0/4 | | 0 | 0 | 0 | 0 | 0 | 変更前 |
+| 更新直後 | 0/4 | | 11 | 157 | 12 | 1 | 0 | テスト・Postman 未修正（非破壊的変更のため PHPUnit/Newman 失敗 0） |
+| 修正後 | 0/4 | | 15 | 263 | 19 | 3 | 0 | テスト・Postman 修正完了 |
 
 ## フェーズ別詳細
 
@@ -53,9 +53,9 @@
 
 ```tsv
 repository	scenario	phase	recorded_at	phpunit_pass	phpunit_total	phpunit_pass_rate	newman_pass	newman_total	newman_pass_rate	phpstan_errors	eslint_ok	ci_jobs_failed	ci_jobs_total	work_minutes	files_changed	lines_added	lines_deleted	commits	manual_bugs	metrics_json	notes
-legacy	api-spec-change-priority	baseline	20260703T063745Z	47	47	100.0	13	13	100.0	0	1			0	0	0			experiment/metrics/runs/run-20260703T063745Z/baseline.json	
-legacy	api-spec-change-priority	after_update	20260703T064012Z	47	47	100.0	13	13	100.0	0	1			11	157	12			experiment/metrics/runs/run-20260703T063745Z/after_update.json	 11 files changed, 157 insertions(+), 12 deletions(-)
-legacy	api-spec-change-priority	after_fix	20260703T064309Z	52	52	100.0	15	15	100.0	0	1			15	263	19			experiment/metrics/runs/run-20260703T063745Z/after_fix.json	 15 files changed, 263 insertions(+), 19 deletions(-)
+legacy	api-spec-change-priority	baseline	20260703T063745Z	47	47	100.0	13	13	100.0	0	1	0	4		0	0	0	0	0	experiment/metrics/runs/run-20260703T063745Z/baseline.json	変更前
+legacy	api-spec-change-priority	after_update	20260703T064012Z	47	47	100.0	13	13	100.0	0	1	0	4		11	157	12	1	0	experiment/metrics/runs/run-20260703T063745Z/after_update.json	テスト・Postman 未修正（非破壊的変更のため PHPUnit/Newman 失敗 0）
+legacy	api-spec-change-priority	after_fix	20260703T064309Z	52	52	100.0	15	15	100.0	0	1	0	4		15	263	19	3	0	experiment/metrics/runs/run-20260703T063745Z/after_fix.json	テスト・Postman 修正完了
 ```
 
 </details>
