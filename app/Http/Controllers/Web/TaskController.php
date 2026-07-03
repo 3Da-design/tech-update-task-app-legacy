@@ -105,9 +105,17 @@ class TaskController extends Controller
       $query->where('priority', $priority);
     }
 
-    $dueSort = $filters['due_date_sort'] ?? 'asc';
-    $direction = $dueSort === 'desc' ? 'desc' : 'asc';
-    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
+    if (array_key_exists('priority_sort', $filters)) {
+      if (array_key_exists('due_date_sort', $filters)) {
+        $dueSort = $filters['due_date_sort'];
+        $direction = $dueSort === 'desc' ? 'desc' : 'asc';
+        $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
+      }
+    } else {
+      $dueSort = $filters['due_date_sort'] ?? 'asc';
+      $direction = $dueSort === 'desc' ? 'desc' : 'asc';
+      $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
+    }
 
     $prioritySort = $filters['priority_sort'] ?? null;
     if ($prioritySort === 'asc' || $prioritySort === 'desc') {
