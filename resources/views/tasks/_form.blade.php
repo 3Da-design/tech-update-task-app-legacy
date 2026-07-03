@@ -31,11 +31,11 @@
   <div class="app-form-field">
     <x-input-label for="status" value="ステータス" />
     <x-select-input id="status" name="status" required class="block w-full">
-      @foreach (config('task.status_values') as $status)
-        <option value="{{ $status }}" @selected(old('status', $task?->status ?? '') === $status)>
-          {{ $status }}
-        </option>
-      @endforeach
+            @foreach (config('task.status_values') as $status)
+                <option value="{{ $status }}" @selected((int) old('status', $task?->status ?? '') === $status)>
+                    {{ config('task.status_labels')[$status] }}
+                </option>
+            @endforeach
     </x-select-input>
     <x-input-error :messages="$errors->get('status')" class="mt-2" />
   </div>
