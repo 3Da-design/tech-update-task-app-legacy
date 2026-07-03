@@ -101,7 +101,7 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 
 # 7. 記録用 Markdown（任意）
 composer experiment:record -- --scenario api-spec-change-priority --write
-scripts/publish-experiment-results.sh --scenario legacy/api-spec-change-priority
+scripts/publish-experiment-results.sh --scenario api-spec-change-priority
 ```
 
 ## 記録するメトリクス
