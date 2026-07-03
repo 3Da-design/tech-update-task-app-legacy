@@ -77,7 +77,7 @@ class TaskController extends Controller
   }
 
   /**
-   * @param  array{title?: string, status?: string, due_date_sort?: string}  $filters
+   * @param  array{title?: string, status?: string, priority?: string, due_date_sort?: string, priority_sort?: string}  $filters
    * @return Collection<int, Task>
    */
   private function listForUser(int $userId, array $filters = []): Collection
@@ -94,9 +94,24 @@ class TaskController extends Controller
       $query->where('status', $status);
     }
 
+    $priority = $filters['priority'] ?? null;
+    if (is_string($priority) && $priority !== '') {
+      $query->where('priority', $priority);
+    }
+
     $dueSort = $filters['due_date_sort'] ?? 'asc';
     $direction = $dueSort === 'desc' ? 'desc' : 'asc';
-    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction)->orderBy('id');
+    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
+
+    $prioritySort = $filters['priority_sort'] ?? null;
+    if ($prioritySort === 'asc' || $prioritySort === 'desc') {
+      $priorityDirection = $prioritySort === 'desc' ? 'desc' : 'asc';
+      $query->orderByRaw(
+        "CASE priority WHEN 'low' THEN 0 WHEN 'medium' THEN 1 WHEN 'high' THEN 2 ELSE 1 END {$priorityDirection}"
+      );
+    }
+
+    $query->orderBy('id');
 
     /** @var Collection<int, Task> */
     return $query->get();
@@ -150,7 +165,7 @@ class TaskController extends Controller
 
   /**
    * @param  array<string, mixed>  $query
-   * @return array{title?: string, status?: string, due_date_sort?: string}
+   * @return array{title?: string, status?: string, priority?: string, due_date_sort?: string, priority_sort?: string}
    */
   private function normalizeListFilters(array $query): array
   {
@@ -170,10 +185,23 @@ class TaskController extends Controller
       }
     }
 
+    if (isset($query['priority']) && is_string($query['priority'])) {
+      $priority = trim($query['priority']);
+      if ($priority !== '' && in_array($priority, config('task.priority_values'), true)) {
+        $filters['priority'] = $priority;
+      }
+    }
+
     if (isset($query['due_date_sort']) && $query['due_date_sort'] === 'desc') {
       $filters['due_date_sort'] = 'desc';
     } elseif (isset($query['due_date_sort']) && $query['due_date_sort'] === 'asc') {
       $filters['due_date_sort'] = 'asc';
+    }
+
+    if (isset($query['priority_sort']) && $query['priority_sort'] === 'desc') {
+      $filters['priority_sort'] = 'desc';
+    } elseif (isset($query['priority_sort']) && $query['priority_sort'] === 'asc') {
+      $filters['priority_sort'] = 'asc';
     }
 
     return $filters;
@@ -185,7 +213,7 @@ class TaskController extends Controller
    */
   private function normalizeTaskPayload(array $data): array
   {
-    $allowed = ['title', 'description', 'status', 'due_date'];
+    $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
     $data = array_intersect_key($data, array_flip($allowed));
 
     if (array_key_exists('title', $data) && is_string($data['title'])) {
