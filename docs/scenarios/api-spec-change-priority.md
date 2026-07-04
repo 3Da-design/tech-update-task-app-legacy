@@ -1204,7 +1204,7 @@ git push origin exp/api-spec-change-priority
 | `app/Repositories/TaskRepository.php` | legacy 構成に存在しない |
 | `app/Repositories/Contracts/TaskRepositoryInterface.php` | legacy 構成に存在しない |
 
-**legacy 固有の期待差分:** improved 比で `git.files_changed` が **+2（Web / API Controller）** 多い想定。improved は代わりに `TaskRepository::getFiltered` を触るが legacy は触らない（`docs/scenarios/api-spec-change-priority.md` 参照）。
+**legacy 固有の期待差分:** improved 比で `git_app.files_changed` が **+2（Web / API Controller）** 多い想定。
 
 ## 関連
 

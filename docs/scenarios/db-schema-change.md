@@ -290,7 +290,7 @@ git push origin exp/db-schema-change
 - [ ]  `experiment/results/` に `publish-experiment-results.sh` の出力がある
 - [ ]  `?title=important` で `Important task` が Web・API 両方でヒットする
 - [ ]  既存の `title=Foo` 部分一致テストが引き続き通過する
-- [ ]  改良構成リポジトリ（`tech-update-task-app`）で同一シナリオを実施し、`git.files_changed` を比較できる
+- [ ]  改良構成リポジトリ（`tech-update-task-app`）で同一シナリオを実施し、`git_app.files_changed` を比較できる
 
 ## 6. 触らないファイルとその理由
 
@@ -310,7 +310,7 @@ git push origin exp/db-schema-change
 
 ---
 
-**legacy 固有の期待差分:** improved 比で `files_changed` が **+1（Web Controller）** 程度多くなる想定です（`docs/scenarios/db-schema-change.md` 参照）。improved は `TaskRepository::getFiltered` 1 ファイル、legacy は Web / API の `listForUser` 2 ファイルに同一クエリ変更が分散する。
+**legacy 固有の期待差分:** improved 比で `git_app.files_changed` が **+1（Web Controller）** 程度多くなる想定です。improved は `TaskRepository::getFiltered` 1 ファイル、legacy は Web / API の `listForUser` 2 ファイルに同一クエリ変更が分散する。
 
 ## 関連
 

@@ -64,7 +64,8 @@
 
 | 優先 | 指標 | 取得方法 |
 |------|------|----------|
-| **1** | 修正工数（変更ファイル数・行数） | `composer experiment:metrics -- --diff-ref experiment-baseline-v1` の `git.files_changed` / `lines_added` / `lines_deleted`（**after_fix** フェーズ） |
+| **1** | 修正工数（変更ファイル数・行数） | `composer experiment:metrics -- --diff-ref experiment-baseline-v1` の **`git_app`**（`experiment/results/`・`experiment/metrics/` を除外したアプリ差分。**after_fix** フェーズ） |
+| **1b** | 修正工数（メタデータ込み・参考） | 同上の **`git`**（`experiment/results/` 配下の結果 JSON 等を含む全体 diff） |
 | **2** | 更新直後のテスト失敗数 | 同上の `phpunit.fail` / `newman.fail`（**after_update** フェーズ） |
 | **3** | 作業時間（分） | [メトリクス記録テンプレート](#メトリクス記録テンプレート) に手動記録 |
 
@@ -72,12 +73,14 @@
 
 ### 1. 修正工数（主指標）
 
-`after_fix` フェーズで CI が緑になった時点の diff を計測する。
+`after_fix` フェーズで CI が緑になった時点の diff を計測する。**論文・構成比較の主指標は `git_app`**（アプリコード・テスト・Postman 等のみ）。`git` は結果公開用 JSON を含む参考値。
 
 | 項目 | 取得方法 |
 |------|----------|
-| 変更ファイル数 | `composer experiment:metrics` の `git.files_changed` |
-| 追加 / 削除行数 | `git.lines_added` / `git.lines_deleted` |
+| 変更ファイル数（主） | `git_app.files_changed` |
+| 追加 / 削除行数（主） | `git_app.lines_added` / `git_app.lines_deleted` |
+| 変更ファイル数（メタデータ込み） | `git.files_changed` |
+| 追加 / 削除行数（メタデータ込み） | `git.lines_added` / `git.lines_deleted` |
 | コミット数 | シナリオ開始〜CI 緑まで（手動） |
 | 作業時間（分） | [メトリクス記録テンプレート](#メトリクス記録テンプレート) に手動記録 |
 
@@ -193,22 +196,25 @@ git show experiment-baseline-v1:docker-compose.yml | head -5
 5. テスト・コードを修正し CI を緑にする
 6. `after_fix` でメトリクス収集
 7. [メトリクス記録テンプレート](#メトリクス記録テンプレート) に記録
-8. 改良構成リポジトリで 3〜7 を繰り返し、各リポジトリの `experiment/results/<scenario-id>/` で比較
+8. 改良構成リポジトリで 3〜7 を繰り返し、各リポジトリの結果ディレクトリ（下表）で比較
 
 ## 結果の配置ルール
 
-legacy / improved の **両リポジトリで同一のパス規則** を用いる。構成の区別はリポジトリ名で行い、パスに `legacy/` 等の接頭辞は付けない。
+legacy / improved で **パス規則が異なる**。シナリオ ID（`<scenario-id>`）は [scenarios/](./scenarios/) の MD ファイル名（拡張子なし）と同一。
+
+| リポジトリ | 配置先 | 公開コマンド例 |
+|------------|--------|----------------|
+| **legacy**（本リポジトリ） | `experiment/results/legacy/<scenario-id>/` | `./scripts/publish-experiment-results.sh --scenario legacy/db-schema-change` |
+| **improved**（`tech-update-task-app`） | `experiment/results/<scenario-id>/` | `./scripts/publish-experiment-results.sh --scenario db-schema-change` |
 
 | 項目 | ルール |
 |------|--------|
-| 配置先 | `experiment/results/<scenario-id>/` |
-| `<scenario-id>` | [scenarios/](./scenarios/) の MD ファイル名（拡張子なし）。例: `db-schema-change` |
-| 公開コマンド | `scripts/publish-experiment-results.sh --scenario <scenario-id>` |
-| 比較 | legacy と improved で **同名ディレクトリ**（例: 両方とも `experiment/results/db-schema-change/`）を対応させる |
+| 比較 | 同一 `<scenario-id>` ごとに legacy の `legacy/<scenario-id>/` と improved の `<scenario-id>/` を対応させる |
+| 統合サマリー | 両リポジトリの `main` に `experiment/results/COMPARISON.md`（マージせず集約） |
 
 ## メトリクス記録テンプレート
 
-スプレッドシート等に転記する列定義。**主指標は `after_fix` の修正工数**（変更ファイル数・行数）。API 仕様変更シナリオでは通過率が構成間で同一になりうるため、通過率だけで構成差を判定しないこと。
+スプレッドシート等に転記する列定義。**主指標は `after_fix` のアプリ修正工数**（`app_*` 列 = metrics JSON の `git_app`）。`meta_*` 列は `experiment/results/` 等を含む参考値。
 
 ### 列定義
 
@@ -229,9 +235,12 @@ legacy / improved の **両リポジトリで同一のパス規則** を用い�
 | `ci_jobs_failed` | CI 失敗ジョブ数 | 手動 |
 | `ci_jobs_total` | CI 実行ジョブ数 | 手動 |
 | `work_minutes` | 作業時間（分） | **手動** |
-| `files_changed` | 変更ファイル数 | metrics JSON `git.files_changed`（**after_fix が主指標**） |
-| `lines_added` | 追加行数 | metrics JSON `git.lines_added` |
-| `lines_deleted` | 削除行数 | metrics JSON `git.lines_deleted` |
+| `app_files_changed` | アプリ変更ファイル数（**主指標**） | metrics JSON `git_app.files_changed` |
+| `app_lines_added` | アプリ追加行数（**主指標**） | metrics JSON `git_app.lines_added` |
+| `app_lines_deleted` | アプリ削除行数（**主指標**） | metrics JSON `git_app.lines_deleted` |
+| `meta_files_changed` | メタデータ込み変更ファイル数（参考） | metrics JSON `git.files_changed` |
+| `meta_lines_added` | メタデータ込み追加行数（参考） | metrics JSON `git.lines_added` |
+| `meta_lines_deleted` | メタデータ込み削除行数（参考） | metrics JSON `git.lines_deleted` |
 | `commits` | コミット数 | **手動** |
 | `manual_bugs` | 手動で発見した不具合件数 | **手動** |
 | `metrics_json` | JSON ファイルへの相対パス | 自動 |
@@ -240,7 +249,7 @@ legacy / improved の **両リポジトリで同一のパス規則** を用い�
 ### 記録例（CSV ヘッダ）
 
 ```text
-repository,scenario,phase,recorded_at,phpunit_pass,phpunit_total,phpunit_pass_rate,newman_pass,newman_total,newman_pass_rate,phpstan_errors,eslint_ok,ci_jobs_failed,ci_jobs_total,work_minutes,files_changed,lines_added,lines_deleted,commits,manual_bugs,metrics_json,notes
+repository,scenario,phase,recorded_at,phpunit_pass,phpunit_total,phpunit_pass_rate,newman_pass,newman_total,newman_pass_rate,phpstan_errors,eslint_ok,ci_jobs_failed,ci_jobs_total,work_minutes,app_files_changed,app_lines_added,app_lines_deleted,meta_files_changed,meta_lines_added,meta_lines_deleted,commits,manual_bugs,metrics_json,notes
 ```
 
 `composer experiment:record -- --scenario <id> --write` で上記列に沿った `RECORD.md` を生成できます。

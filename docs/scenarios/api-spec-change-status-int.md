@@ -719,7 +719,7 @@ composer experiment:record -- --scenario api-spec-change-status-int --write
 **Step 5-6.** 結果をコミット・プッシュする。
 
 ```bash
-git add experiment/results/api-spec-change-status-int/
+git add experiment/results/legacy/api-spec-change-status-int/
 git commit -m "docs(experiment): publish api-spec-change-status-int results"
 git push -u origin exp/api-spec-change-status-int
 ```
@@ -736,7 +736,7 @@ gh pr create --base main --head exp/api-spec-change-status-int \
 
 ## Test plan
 - [ ] GitHub Actions 4 ジョブすべて成功
-- [ ] `experiment/results/api-spec-change-status-int/` に 3 フェーズ JSON + RECORD.md がある
+- [ ] `experiment/results/legacy/api-spec-change-status-int/` に 3 フェーズ JSON + RECORD.md がある
 
 実験用 PR。マージはしない。
 EOF
@@ -752,7 +752,7 @@ EOF
 **Step 5-9.** 結果を手動で変更し、コミット・プッシュする。
 
 ```bash
-git add experiment/results/api-spec-change-status-int/RECORD.md
+git add experiment/results/legacy/api-spec-change-status-int/RECORD.md
 git commit -m "$(cat <<'EOF'
 docs: fill manual experiment record for api-spec-change-status-int
 
@@ -783,7 +783,7 @@ git push origin exp/api-spec-change-status-int
 
 ---
 
-**legacy 固有の期待差分:** improved 比で `files_changed` が **+2（Web / API Controller）** 程度多くなる想定です（`docs/scenarios/api-spec-change-status-int.md` 参照）。
+**legacy 固有の期待差分:** improved 比で `git_app.files_changed` が **+2（Web / API Controller）** 程度多くなる想定です。
 
 ## 関連
 

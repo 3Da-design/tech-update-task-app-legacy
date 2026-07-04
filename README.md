@@ -217,7 +217,7 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 
 ### 4. 改良構成との比較
 
-改良構成リポジトリで **同じシナリオ・同じ手順** を実施し、各リポジトリの `experiment/results/<scenario>/` でメトリクスを比較します。本リポジトリの作成手順は [docs/EXPERIMENT.md — 従来構成リポジトリ作成記録](docs/EXPERIMENT.md#従来構成リポジトリ作成記録) を参照してください。
+改良構成リポジトリで **同じシナリオ・同じ手順** を実施し、legacy は `experiment/results/legacy/<scenario>/`、improved は `experiment/results/<scenario>/` でメトリクスを比較します。本リポジトリの作成手順は [docs/EXPERIMENT.md — 従来構成リポジトリ作成記録](docs/EXPERIMENT.md#従来構成リポジトリ作成記録) を参照してください。
 
 ---
 
@@ -241,7 +241,8 @@ composer experiment:metrics -- --phase after_fix --diff-ref experiment-baseline-
 
 | 優先 | 指標 | 概要 | 取得 |
 |------|------|------|------|
-| **1** | **修正工数** | 変更ファイル数・追加/削除行 | `composer experiment:metrics -- --diff-ref experiment-baseline-v1` の `git.*`（**after_fix**） |
+| **1** | **修正工数（アプリ）** | 変更ファイル数・追加/削除行 | `git_app.*`（**after_fix**・主指標） |
+| **1b** | 修正工数（メタデータ込み） | 結果 JSON 含む全体 diff | `git.*`（参考） |
 | 2 | 更新直後のテスト失敗数 | PHPUnit / Newman の fail 件数 | 同上（**after_update**） |
 | 3 | 作業時間 | 分 | 手動（[EXPERIMENT.md — メトリクス記録テンプレート](docs/EXPERIMENT.md#メトリクス記録テンプレート)） |
 | 4 | エラー発生率 | PHPStan 件数、CI 失敗ジョブ | スクリプト + 手動 |
