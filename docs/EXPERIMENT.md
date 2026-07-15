@@ -86,6 +86,8 @@
 
 **完了基準:** 両リポジトリで CI 全ジョブが成功（`after_fix` フェーズ）。
 
+**CI 結果は 3 フェーズすべてで記録する。** `after_fix` の緑は完了基準だが、`baseline`（緑の起点）と `after_update`（更新でどれだけ壊れたか）の CI 結果も比較材料になる。`exp/*` ブランチは `pull_request` トリガでしか CI が走らないため、**Phase 1（baseline）の時点で draft PR を1本作り、以降の各フェーズの push を同じ PR に積む**（手順は `docs/scenarios/*.md` の Step 1-2）。
+
 ### 2. 更新直後のテスト失敗数
 
 通過率（成功 ÷ 総数）は参考値。**構成差の判定には使わない**（API 系シナリオで同一になりうる）。
@@ -107,7 +109,7 @@
 |------|--------|
 | PHPUnit 失敗数 | 更新直後（`after_update`）の fail 件数 |
 | PHPStan エラー件数 | 更新直後の error 行数 |
-| CI ジョブ失敗 | push ごとの失敗ジョブ数 ÷ 実行ジョブ数 |
+| CI ジョブ失敗 | フェーズごとの失敗ジョブ数 ÷ 実行ジョブ数（`baseline` / `after_update` / `after_fix` の 3 点を記録） |
 | 手動不具合 | ブラウザ / API で発見したバグ件数（メモ欄） |
 
 ## フロントエンドスタック（拡張比較）
@@ -118,11 +120,13 @@ Blade と React の比較は、主シナリオ 3 件とは別枠の **拡張比�
 
 ## 実験フェーズ
 
-| フェーズ | 説明 | メトリクス収集 |
-|----------|------|----------------|
-| `baseline` | 更新前・CI 緑の状態 | `composer experiment:metrics -- --phase baseline` |
-| `after_update` | 更新適用直後・テスト未修正 | 同上 `--phase after_update` |
-| `after_fix` | 修正完了・CI 緑 | 同上 `--phase after_fix` |
+| フェーズ | 説明 | メトリクス収集 | GitHub CI |
+|----------|------|----------------|-----------|
+| `baseline` | 更新前・CI 緑の状態 | `composer experiment:metrics -- --phase baseline` | draft PR を作成し緑を確認 |
+| `after_update` | 更新適用直後・テスト未修正 | 同上 `--phase after_update` | 同じ PR に push し結果を記録（赤でも可） |
+| `after_fix` | 修正完了・CI 緑 | 同上 `--phase after_fix` | 同じ PR に push し緑を確認 |
+
+各フェーズの push 後は `gh pr checks exp/<scenario> --watch` で CI 完了を待ち、失敗ジョブ数を RECORD.md の手動記入表に記録する。`ci.yml` は `concurrency: cancel-in-progress` のため、待たずに次を push すると前フェーズの run がキャンセルされて結果が残らない。
 
 ## ベースラインの確立
 
@@ -232,8 +236,8 @@ legacy / improved で **パス規則が異なる**。シナリオ ID（`<scenari
 | `newman_pass_rate` | 通過率（参考） | metrics JSON |
 | `phpstan_errors` | PHPStan エラー件数 | metrics JSON |
 | `eslint_ok` | ESLint 成功（1/0） | metrics JSON |
-| `ci_jobs_failed` | CI 失敗ジョブ数 | 手動 |
-| `ci_jobs_total` | CI 実行ジョブ数 | 手動 |
+| `ci_jobs_failed` | CI 失敗ジョブ数（3 フェーズ分） | 手動（`gh pr checks exp/<scenario> --watch`） |
+| `ci_jobs_total` | CI 実行ジョブ数（通常 4） | 手動（同上） |
 | `work_minutes` | 作業時間（分） | **手動** |
 | `app_files_changed` | アプリ変更ファイル数（**主指標**） | metrics JSON `git_app.files_changed` |
 | `app_lines_added` | アプリ追加行数（**主指標**） | metrics JSON `git_app.lines_added` |
