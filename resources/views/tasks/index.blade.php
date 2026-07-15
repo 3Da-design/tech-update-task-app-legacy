@@ -29,8 +29,8 @@
           <x-select-input id="filter-status" name="status" class="block w-full">
             <option value="">すべて</option>
             @foreach (config('task.status_values') as $status)
-              <option value="{{ $status }}" @selected(old('status', request('status')) === $status)>
-                {{ $status }}
+              <option value="{{ $status }}" @selected((int) old('status', request('status', '')) === $status)>
+                {{ config('task.status_labels')[$status] }}
               </option>
             @endforeach
           </x-select-input>
@@ -82,7 +82,7 @@
           @forelse ($tasks as $task)
             <tr>
               <td class="font-medium text-gray-900">{{ $task->title }}</td>
-              <td>{{ $task->status }}</td>
+              <td>{{ config('task.status_labels')[$task->status] ?? $task->status }}</td>
               <td>{{ $task->due_date?->format('Y-m-d') ?? '-' }}</td>
               <td class="text-right">
                 <a href="{{ route('tasks.edit', $task->id) }}" class="app-link me-3">編集</a>
