@@ -37,31 +37,49 @@
           <x-input-error :messages="$errors->get('status')" class="mt-1" />
         </div>
 
+        <div class="app-form-field mb-0 min-w-[8rem] flex-1">
+          <x-input-label for="filter-priority" value="優先度" />
+          <x-select-input id="filter-priority" name="priority" class="block w-full">
+            <option value="">すべて</option>
+            @foreach (config('task.priority_values') as $priority)
+              <option value="{{ $priority }}" @selected(old('priority', request('priority')) === $priority)>
+                {{ $priority }}
+              </option>
+            @endforeach
+          </x-select-input>
+          <x-input-error :messages="$errors->get('priority')" class="mt-1" />
+        </div>
+
         <div class="app-form-field mb-0 min-w-[10rem] flex-1">
           <x-input-label value="期限並び替え" />
+          ...
+        </div>
+
+        <div class="app-form-field mb-0 min-w-[10rem] flex-1">
+          <x-input-label value="優先度並び替え" />
           <div class="app-radio-group">
             <label class="app-radio-label">
               <input
                 type="radio"
-                name="due_date_sort"
+                name="priority_sort"
                 value="asc"
                 class="app-radio"
-                @checked(old('due_date_sort', request('due_date_sort', 'asc')) === 'asc')
+                @checked(old('priority_sort', request('priority_sort', 'asc')) === 'asc')
               >
               昇順
             </label>
             <label class="app-radio-label">
               <input
                 type="radio"
-                name="due_date_sort"
+                name="priority_sort"
                 value="desc"
                 class="app-radio"
-                @checked(old('due_date_sort', request('due_date_sort')) === 'desc')
+                @checked(old('priority_sort', request('priority_sort')) === 'desc')
               >
               降順
             </label>
           </div>
-          <x-input-error :messages="$errors->get('due_date_sort')" class="mt-1" />
+          <x-input-error :messages="$errors->get('priority_sort')" class="mt-1" />
         </div>
 
         <x-primary-button type="submit">適用</x-primary-button>
@@ -74,6 +92,7 @@
           <tr>
             <th>タイトル</th>
             <th>ステータス</th>
+            <th>優先度</th>
             <th>期限</th>
             <th class="text-right">操作</th>
           </tr>
@@ -83,6 +102,7 @@
             <tr>
               <td class="font-medium text-gray-900">{{ $task->title }}</td>
               <td>{{ $task->status }}</td>
+              <td>{{ $task->priority }}</td>
               <td>{{ $task->due_date?->format('Y-m-d') ?? '-' }}</td>
               <td class="text-right">
                 <a href="{{ route('tasks.edit', $task->id) }}" class="app-link me-3">編集</a>
@@ -100,7 +120,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="4" class="py-8 text-center text-gray-500">タスクがありません</td>
+              <td colspan="5" class="py-8 text-center text-gray-500">タスクがありません</td>
             </tr>
           @endforelse
         </tbody>
