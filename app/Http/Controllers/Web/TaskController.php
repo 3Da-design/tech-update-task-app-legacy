@@ -105,10 +105,6 @@ class TaskController extends Controller
       $query->where('priority', $priority);
     }
 
-    $dueSort = $filters['due_date_sort'] ?? 'asc';
-    $direction = $dueSort === 'desc' ? 'desc' : 'asc';
-    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
-
     $prioritySort = $filters['priority_sort'] ?? null;
     if ($prioritySort === 'asc' || $prioritySort === 'desc') {
       $priorityDirection = $prioritySort === 'desc' ? 'desc' : 'asc';
@@ -116,6 +112,10 @@ class TaskController extends Controller
         "CASE priority WHEN 'low' THEN 0 WHEN 'medium' THEN 1 WHEN 'high' THEN 2 ELSE 1 END {$priorityDirection}"
       );
     }
+
+    $dueSort = $filters['due_date_sort'] ?? 'asc';
+    $direction = $dueSort === 'desc' ? 'desc' : 'asc';
+    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
 
     $query->orderBy('id');
 
