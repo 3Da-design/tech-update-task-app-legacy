@@ -83,7 +83,7 @@ class TaskController extends Controller
   }
 
   /**
-  * @param  array{title?: string, status?: string, priority?: string, due_date_sort?: string, priority_sort?: string}  $filters
+   * @param  array{title?: string, status?: string, priority?: string, due_date_sort?: string, priority_sort?: string}  $filters
    * @return Collection<int, Task>
    */
   private function listForUser(int $userId, array $filters = []): Collection
