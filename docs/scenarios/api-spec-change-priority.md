@@ -423,7 +423,7 @@ $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
 
 - **ファイル:** `app/Http/Controllers/Web/TaskController.php`
 - **場所:** PHPDoc 86行目、`listForUser()` 98–105行目
-- **解説:** 正規化済みフィルタで DB クエリを組み立てる。`priority` は string のため辞書順ではなく CASE 式で low → medium → high の意味順に並べる。
+- **解説:** 正規化済みフィルタで DB クエリを組み立てる。`priority` は string のため辞書順ではなく CASE 式で low → medium → high の意味順に並べる。**`priority_sort` 指定時は priority の CASE 式を due_date より先に適用する**（due_date を先に並べると due_date がほぼ一意なため全順序が確定し、priority の並び替えが no-op になる）。
 - **変更前:**
 
 ```php
@@ -458,10 +458,6 @@ $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
       $query->where('priority', $priority);
     }
 
-    $dueSort = $filters['due_date_sort'] ?? 'asc';
-    $direction = $dueSort === 'desc' ? 'desc' : 'asc';
-    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
-
     $prioritySort = $filters['priority_sort'] ?? null;
     if ($prioritySort === 'asc' || $prioritySort === 'desc') {
       $priorityDirection = $prioritySort === 'desc' ? 'desc' : 'asc';
@@ -469,6 +465,10 @@ $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
         "CASE priority WHEN 'low' THEN 0 WHEN 'medium' THEN 1 WHEN 'high' THEN 2 ELSE 1 END {$priorityDirection}"
       );
     }
+
+    $dueSort = $filters['due_date_sort'] ?? 'asc';
+    $direction = $dueSort === 'desc' ? 'desc' : 'asc';
+    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
 
     $query->orderBy('id');
 ```
@@ -561,7 +561,7 @@ $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
 
 - **ファイル:** `app/Http/Controllers/API/TaskController.php`
 - **場所:** PHPDoc 80行目、`listForUser()` 92–99行目
-- **解説:** API 一覧エンドポイントでも Web と同じ priority フィルタ・意味順ソートを提供する。片方だけ直すと Web/API 間で一覧挙動がずれる。
+- **解説:** API 一覧エンドポイントでも Web と同じ priority フィルタ・意味順ソートを提供する（Step 2-12 と同様、`priority_sort` 指定時は priority の CASE 式を due_date より先に適用する）。片方だけ直すと Web/API 間で一覧挙動がずれる。
 - **変更前:**
 
 ```php
@@ -596,10 +596,6 @@ $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
       $query->where('priority', $priority);
     }
 
-    $dueSort = $filters['due_date_sort'] ?? 'asc';
-    $direction = $dueSort === 'desc' ? 'desc' : 'asc';
-    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
-
     $prioritySort = $filters['priority_sort'] ?? null;
     if ($prioritySort === 'asc' || $prioritySort === 'desc') {
       $priorityDirection = $prioritySort === 'desc' ? 'desc' : 'asc';
@@ -607,6 +603,10 @@ $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
         "CASE priority WHEN 'low' THEN 0 WHEN 'medium' THEN 1 WHEN 'high' THEN 2 ELSE 1 END {$priorityDirection}"
       );
     }
+
+    $dueSort = $filters['due_date_sort'] ?? 'asc';
+    $direction = $dueSort === 'desc' ? 'desc' : 'asc';
+    $query->orderByRaw('due_date IS NULL DESC')->orderBy('due_date', $direction);
 
     $query->orderBy('id');
 ```
@@ -891,7 +891,7 @@ public function test_store_with_invalid_priority_returns_422(): void
 
 - **ファイル:** `tests/Feature/TaskWebTest.php`
 - **場所:** `test_store_creates_task_and_redirects()` 行 48–57、`test_update_changes_task_and_redirects()` 行 80–93
-- **解説:** Web フォーム経由でも priority が保存・更新されることを DB アサーションで確認する。
+- **解説:** Web フォーム経由でも priority が保存・更新されることを DB アサーションで確認する。update テストのリダイレクト期待値には `priority` も含める（Step 2-13 で `$request->only()` に `priority` を追加したため、PUT body の `priority` がリダイレクト先クエリに乗る）。
 - **変更前（store テスト）:**
 
 ```php
@@ -955,6 +955,7 @@ $response = $this->actingAs($this->user)->put("/tasks/{$task->id}", [
 $response->assertRedirect(route('tasks.index', [
   'title' => 'After',
   'status' => 'in_progress',
+  'priority' => 'high',
 ]));
 $this->assertDatabaseHas('tasks', [
   'id' => $task->id,
