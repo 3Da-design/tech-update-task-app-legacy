@@ -1,0 +1,61 @@
+{
+  "run_id": "run-20260826T052846Z",
+  "phase": "after_fix",
+  "recorded_at": "20260826T062317Z",
+  "repository": "legacy",
+  "phpstan": {
+    "exit_code": 0,
+    "error_count": 0,
+    "ok": true
+  },
+  "eslint": {
+    "exit_code": 0,
+    "ok": true
+  },
+  "vite_build": {
+    "exit_code": 0,
+    "ok": true
+  },
+  "phpunit": {
+    "exit_code": 0,
+    "pass": 52,
+    "fail": 0,
+    "total": 52,
+    "pass_rate": 100.0,
+    "ok": true
+  },
+  "newman": {
+    "exit_code": 0,
+    "pass": 15,
+    "fail": 0,
+    "total": 15,
+    "pass_rate": 100.0,
+    "ok": true
+  },
+  "git_app": {
+    "diff_ref": "experiment-baseline-v1",
+    "files_changed": 15,
+    "lines_added": 230,
+    "lines_deleted": 12,
+    "diff_shortstat": " 15 files changed, 230 insertions(+), 12 deletions(-)",
+    "excludes": [
+      "experiment/results/",
+      "experiment/metrics/",
+      "public/assets/",
+      "public/index.html",
+      "docs/",
+      "scripts/collect-experiment-metrics.sh",
+      "scripts/generate_experiment_record.py",
+      "scripts/publish-experiment-results.sh",
+      "scripts/lib/"
+    ]
+  },
+  "git": {
+    "diff_ref": "experiment-baseline-v1",
+    "files_changed": 15,
+    "lines_added": 230,
+    "lines_deleted": 12,
+    "diff_shortstat": " 15 files changed, 230 insertions(+), 12 deletions(-)",
+    "includes_experiment_metadata": true
+  }
+}
