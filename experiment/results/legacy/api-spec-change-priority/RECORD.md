@@ -26,7 +26,7 @@
 |:---------|:---------------|:--------------|:-------------------|:-------------|:-------------|:-----------|:---------|:-----|
 | ベースライン | 0/4 | 5 | 0 | 0 | 0 | 1 | 0 | タグと差分ゼロの anchor コミット（`2e9b442`）。CI 4ジョブ緑（run 32934243972・PHPUnit 47/47・Newman 13/13・PHPStan 0・ESLint OK） |
 | 更新直後 | 0/4 | 47 | 11 | 145 | 10 | 1 | 1 | 実装のみ（`5af3112`、tests/Postman 未修正）。**非破壊的変更**のため既存テストは全通過（PHPUnit 47/47・Newman 13/13）。CI 4ジョブ緑（run 32937080543）。**手動バグ1件:** 初回 push の `4cd9b08` に `config('tasks.priority_values')`（正 `task.`）のタイプミスが6箇所あり、Blade の `foreach(null)` で 500 → CI 2/4 赤（run 32936534911・`PHP Tests` / `API Tests (Newman)`）。amend 修正後の `5af3112` で after_update を再計測（20260826T063018Z） |
-| 修正後 |  | 32 | 15 | 230 | 12 | 1 | 0 | tests 3ファイル + Postman を priority 仕様へ修正（`881f8a6`）。ローカル `check-quality.sh` 一発緑（PHPUnit 52/52・Newman 15/15・PHPStan 0・ESLint OK）。**legacy 固有:** Service/Repository が無いため `normalizeTaskPayload` / `normalizeListFilters` / `listForUser` を Web/API 両 Controller に二重修正（15 files の内訳 = Controller 2・Request 3・Resource 1・Model 1・config 1・migration 1・Blade 2・tests 3・Postman 1） |
+| 修正後 | 0/4 | 32 | 15 | 230 | 12 | 1 | 0 | tests 3ファイル + Postman を priority 仕様へ修正（`881f8a6`）。ローカル `check-quality.sh` 一発緑（PHPUnit 52/52・Newman 15/15・PHPStan 0・ESLint OK）。CI 4ジョブ緑（`5c65243` / run 32938536287）。**legacy 固有:** Service/Repository が無いため `normalizeTaskPayload` / `normalizeListFilters` / `listForUser` を Web/API 両 Controller に二重修正（15 files の内訳 = Controller 2・Request 3・Resource 1・Model 1・config 1・migration 1・Blade 2・tests 3・Postman 1） |
 
 ## フェーズ別詳細
 
