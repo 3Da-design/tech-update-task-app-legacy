@@ -83,7 +83,7 @@ class TaskController extends Controller
   }
 
   /**
-   * @param  array{title?: string, status?: string, due_date_sort?: string}  $filters
+   * @param  array{title?: string, status?: int, due_date_sort?: string}  $filters
    * @return Collection<int, Task>
    */
   private function listForUser(int $userId, array $filters = []): Collection
@@ -96,7 +96,7 @@ class TaskController extends Controller
     }
 
     $status = $filters['status'] ?? null;
-    if (is_string($status) && $status !== '') {
+    if (is_int($status)) {
       $query->where('status', $status);
     }
 
@@ -156,7 +156,7 @@ class TaskController extends Controller
 
   /**
    * @param  array<string, mixed>  $query
-   * @return array{title?: string, status?: string, due_date_sort?: string}
+   * @return array{title?: string, status?: int, due_date_sort?: string}
    */
   private function normalizeListFilters(array $query): array
   {
@@ -169,9 +169,9 @@ class TaskController extends Controller
       }
     }
 
-    if (isset($query['status']) && is_string($query['status'])) {
-      $status = trim($query['status']);
-      if ($status !== '') {
+    if (isset($query['status']) && is_numeric($query['status'])) {
+      $status = (int) $query['status'];
+      if (in_array($status, config('task.status_values'), true)) {
         $filters['status'] = $status;
       }
     }
@@ -206,6 +206,10 @@ class TaskController extends Controller
         $trimmed = trim($desc);
         $data['description'] = $trimmed === '' ? null : $trimmed;
       }
+    }
+
+    if (array_key_exists('status', $data)) {
+      $data['status'] = (int) $data['status'];
     }
 
     return $data;
