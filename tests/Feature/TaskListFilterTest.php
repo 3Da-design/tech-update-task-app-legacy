@@ -185,6 +185,25 @@ class TaskListFilterTest extends TestCase
     $this->assertLessThan($barPos, $bazPos);
   }
 
+  public function test_web_index_sorts_priority_desc(): void
+  {
+    $this->seedTasks();
+
+    $response = $this->actingAs($this->user)->get('/tasks?priority_sort=desc');
+
+    $response->assertOk();
+    $content = $response->getContent();
+    $this->assertNotFalse($content);
+    $fooPos = strpos($content, 'Foo task');
+    $bazPos = strpos($content, 'Baz task');
+    $barPos = strpos($content, 'Bar task');
+    $this->assertNotFalse($fooPos);
+    $this->assertNotFalse($bazPos);
+    $this->assertNotFalse($barPos);
+    $this->assertLessThan($bazPos, $barPos);
+    $this->assertLessThan($fooPos, $bazPos);
+  }
+
   public function test_api_index_filters_by_priority(): void
   {
     $this->seedTasks();
@@ -205,5 +224,16 @@ class TaskListFilterTest extends TestCase
     $response->assertOk();
     $titles = collect($response->json('data'))->pluck('title')->all();
     $this->assertSame(['Foo task', 'Baz task', 'Bar task'], $titles);
+  }
+
+  public function test_api_index_sorts_priority_desc(): void
+  {
+    $this->seedTasks();
+
+    $response = $this->actingAs($this->user)->getJson('/api/tasks?priority_sort=desc');
+
+    $response->assertOk();
+    $titles = collect($response->json('data'))->pluck('title')->all();
+    $this->assertSame(['Bar task', 'Baz task', 'Foo task'], $titles);
   }
 }
