@@ -1,7 +1,7 @@
 {
-  "run_id": "run-20260826T052846Z",
+  "run_id": "run-20260827T045339Z",
   "phase": "baseline",
-  "recorded_at": "20260826T052846Z",
+  "recorded_at": "20260827T045346Z",
   "repository": "legacy",
   "phpstan": {
     "exit_code": 0,
