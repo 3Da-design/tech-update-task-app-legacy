@@ -26,7 +26,7 @@ class TaskWebTest extends TestCase
       'user_id' => $this->user->id,
       'title' => 'Web task',
       'description' => null,
-      'status' => 'todo',
+      'status' => 0,
       'due_date' => null,
     ]);
 
@@ -47,7 +47,7 @@ class TaskWebTest extends TestCase
   {
     $response = $this->actingAs($this->user)->post('/tasks', [
       'title' => 'New web task',
-      'status' => 'todo',
+      'status' => 0,
     ]);
 
     $response->assertRedirect(route('tasks.index'));
@@ -60,7 +60,7 @@ class TaskWebTest extends TestCase
   public function test_store_without_title_returns_validation_errors(): void
   {
     $response = $this->actingAs($this->user)->post('/tasks', [
-      'status' => 'todo',
+      'status' => 0,
     ]);
 
     $response->assertSessionHasErrors('title');
@@ -73,23 +73,23 @@ class TaskWebTest extends TestCase
       'user_id' => $this->user->id,
       'title' => 'Before',
       'description' => null,
-      'status' => 'todo',
+      'status' => 0,
       'due_date' => null,
     ]);
 
     $response = $this->actingAs($this->user)->put("/tasks/{$task->id}", [
       'title' => 'After',
-      'status' => 'in_progress',
+      'status' => 1,
     ]);
 
     $response->assertRedirect(route('tasks.index', [
       'title' => 'After',
-      'status' => 'in_progress',
+      'status' => 1,
     ]));
     $this->assertDatabaseHas('tasks', [
       'id' => $task->id,
       'title' => 'After',
-      'status' => 'in_progress',
+      'status' => 1,
     ]);
   }
 
@@ -99,7 +99,7 @@ class TaskWebTest extends TestCase
       'user_id' => $this->user->id,
       'title' => 'To delete',
       'description' => null,
-      'status' => 'todo',
+      'status' => 0,
       'due_date' => null,
     ]);
 
