@@ -25,8 +25,8 @@
 | フェーズ | CI (失敗/総数) | 作業時間 (分) | アプリ変更ファイル | アプリ追加行 | アプリ削除行 | コミット数 | 手動バグ | メモ |
 |:---------|:---------------|:--------------|:-------------------|:-------------|:-------------|:-----------|:---------|:-----|
 | ベースライン | 0/4 | 4 | 0 | 0 | 0 | 1 | 0 | タグと差分ゼロの anchor コミット（`f39e858`）。CI 4ジョブ緑（run 32931286125・PHPUnit 47/47・Newman 13/13・PHPStan 0・ESLint OK） |
-| 更新直後 | 2/4 | 24 | 10 | 75 | 22 | 1 | 0 | 実装のみ（`7d224b4`、tests/Postman 未修正）。**破壊的な型変更**のため PHPUnit 30/47（17 失敗）・Newman 10/13（3 失敗）。CI は run 32932797990 で `PHP Tests` / `API Tests (Newman)` の2ジョブが赤、`PHP Quality`・`Frontend` は緑 |
-| 修正後 | 0/4 | 11 | 14 | 97 | 44 | 1 | 0 | tests 3ファイル + Postman を int 仕様へ修正（`d87c02f`）。ローカル `check-quality.sh` 一発緑（PHPUnit 47/47・Newman 13/13・PHPStan 0・ESLint OK）。CI 4ジョブ緑（`7c54890` / run 32933673204）。**legacy 固有:** Service/Repository が無いため `normalizeListFilters` / `normalizeTaskPayload` / `listForUser` を Web/API 両 Controller に二重修正（14 files の内訳 = Controller 2・Request 3・Model/config/migration 3・Blade 2・tests 3・Postman 1） |
+| 更新直後 | 2/4 | 41 | 10 | 75 | 22 | 1 | 0 | 実装のみ（`7d224b4`、tests/Postman 未修正）。**破壊的な型変更**のため PHPUnit 30/47（17 失敗）・Newman 10/13（3 失敗）。CI は run 32932797990 で `PHP Tests` / `API Tests (Newman)` の2ジョブが赤、`PHP Quality`・`Frontend` は緑 |
+| 修正後 | 0/4 | 21 | 14 | 97 | 44 | 1 | 0 | tests 3ファイル + Postman を int 仕様へ修正（`d87c02f`）。ローカル `check-quality.sh` 一発緑（PHPUnit 47/47・Newman 13/13・PHPStan 0・ESLint OK）。CI 4ジョブ緑（`7c54890` / run 32933673204）。**legacy 固有:** Service/Repository が無いため `normalizeListFilters` / `normalizeTaskPayload` / `listForUser` を Web/API 両 Controller に二重修正（14 files の内訳 = Controller 2・Request 3・Model/config/migration 3・Blade 2・tests 3・Postman 1） |
 
 ## フェーズ別詳細
 
